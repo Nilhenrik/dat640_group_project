@@ -1,10 +1,11 @@
 import re
 from typing import List
-import pandas as pd
 from sqlitedict import SqliteDict
 import nltk
 nltk.download("stopwords")
 STOPWORDS = set(nltk.corpus.stopwords.words("english"))
+from scorer import ScorerBM25, DocumentCollection
+
 
 def preprocess(doc: str) -> List[str]:
     """Preprocesses a string of text.
@@ -27,7 +28,9 @@ class InvertedIndex(SqliteDict):
         new: bool = False,
     ) -> None:
         super().__init__(filename, flag="n" if new else "c")
-        self.index ={} if new else self    
+        self.index ={} if new else self
+        self.collection ={} if new else self
+        
     def add_posting(self,term:str,doc_id:int)->None:
         if term not in self.index:
             self.index[term] = {}
@@ -49,6 +52,25 @@ if __name__ == "__main__":
         with InvertedIndex('inverted_index.sqlite', new=True) as index:
             for line in file:
                 fields = line.strip().split('\t')
-                for term in preprocess(fields[1]):
+                terms = preprocess(fields[1])
+                doc_id = int(fields[0])
+                index.collection[doc_id] = terms
+                for term in terms:
                     if term is None:continue
-                    index.add_posting(term, fields[0])
+                    index.add_posting(term, doc_id)
+            scorer_bm25 = ScorerBM25(DocumentCollection(index.collection), index.index)
+            with open('queries_train.csv','r') as f:
+                next(f)
+                index = 0
+                for line in f:
+                    if index==1: break
+                    columns = line.split(',')
+                    turn_indentifier = columns[0]
+                    placeholder = "Q0"
+                    test = scorer_bm25.score_collection(preprocess(columns[1]))
+                    top_results = scorer_bm25.get_top_n_results(1000)
+                    for i, res in enumerate(top_results):
+                        doc_id = res[0]
+                        doc_score = res[1]
+                        print(f"{turn_indentifier} {placeholder} {doc_id} {i} {doc_score} BM25")
+                    index+=1
