@@ -1,6 +1,6 @@
 # Own files
 *.tsv
-
+*.sqlite
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
