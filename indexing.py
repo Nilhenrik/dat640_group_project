@@ -36,6 +36,13 @@ class InvertedIndex(SqliteDict):
         else:
             self.index[term][doc_id]=1
             
+    def __exit__(self, *exc_info):
+        if self.flag == "n":
+            self.update(self.index)
+            self.commit()
+            print("Index updated.")
+        super().__exit__(*exc_info)
+            
 
 if __name__ == "__main__":
     with open('collection.tsv', 'r') as file:
