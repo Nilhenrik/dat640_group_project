@@ -4,7 +4,8 @@ from collections import UserDict as DictClass
 from collections import defaultdict
 from collections import Counter
 import abc
-
+from tqdm import tqdm
+from indexing import preprocess,InvertedIndex
 CollectionType = Dict[str, List[int]]
 
 class DocumentCollection(DictClass):
@@ -61,7 +62,7 @@ class Scorer(abc.ABC):
         self.scores = defaultdict(float)  # Reset scores.
         query_term_freqs = Counter(query_terms)
 
-        for term, query_freq in query_term_freqs.items():
+        for term, query_freq in tqdm(query_term_freqs.items()):
             self.score_term(term, query_freq)
 
         return self.scores
@@ -90,13 +91,41 @@ class ScorerBM25(Scorer):
         self.k1 = k1
 
     def score_term(self, term: str, query_freq: int) -> None:
-        if not term in self.index:
-            return
-        N = len(self.collection)
-        nt = len(self.index.get(term) or [])          
+        docs = self.index.get(term) or []
+        #print(docs)
+        N = self.collection.total_length()
+        nt = len(docs)
         avgdl = self.collection.avg_length()
-        for doc_id in self.collection:
-            doc = self.collection.get(doc_id)
-            dlen = len(doc)
-            ctd = doc.count(term)
-            self.scores[doc_id] += ((ctd*(1+self.k1)) / (ctd+self.k1*(1-self.b+self.b*(dlen/avgdl)))) * math.log(N/nt)
+        for doc_id, ctd in docs.items():
+            dlen = self.collection.get(doc_id)
+            ctd = ctd
+            self.scores[doc_id] += ((ctd*(1+self.k1)) / (ctd+self.k1*(1-self.b+self.b*(dlen/avgdl)))) * math.log(N/nt) 
+
+
+if __name__ == "__main__":
+    print("Scoring...")
+    index_file = "inverted_index.sqlite"
+    index = InvertedIndex(index_file)
+    scorer_bm25 = ScorerBM25(DocumentCollection(index.collection), index.index)
+    print("Reading queries...")
+    with open('queries_train.csv','r') as f:
+        next(f)
+        index = 1
+        print("Writing queries...")
+        with open("output.txt","w") as trec:
+            for line in tqdm(f):
+                if index==2:break
+                columns = line.split(',')
+                turn_indentifier = columns[0]
+                placeholder = "Q0"
+                test = scorer_bm25.score_collection(preprocess(columns[1]))
+                top_results = scorer_bm25.get_top_n_results(1000)
+                print("top_results")
+                print(top_results)
+                for i, res in enumerate(top_results):
+                    doc_id = res[0]
+                    doc_score = res[1]
+                    line = f"{turn_indentifier} {placeholder} {doc_id} {i+1} {doc_score} BM25\n"
+                    print("result written")
+                    trec.write(line)
+                index+=1
