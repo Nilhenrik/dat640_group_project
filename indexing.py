@@ -52,7 +52,7 @@ if __name__ == "__main__":
     with open('collection.tsv', 'r',encoding='utf-8') as file:
         with InvertedIndex('inverted_index.sqlite', new=True,) as index:
             for i,line in tqdm(enumerate(file)):
-                if i == 10000: break
+                """ if i == 10000: break """
                 fields = line.strip().split('\t')
                 terms = preprocess(fields[1])
                 doc_id = int(fields[0])

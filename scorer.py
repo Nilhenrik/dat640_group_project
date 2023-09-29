@@ -85,8 +85,8 @@ class ScorerBM25(Scorer):
         k1: float = 1.2,
     ) -> None:
         super(ScorerBM25, self).__init__(index, collection)
-        print(collection.values())
-        print(index.values())
+        """ print(collection.values())
+        print(index.values()) """
         self.b = b
         self.k1 = k1
 
@@ -105,34 +105,36 @@ if __name__ == "__main__":
     lengths = {}
     with open('collection.tsv', 'r',encoding='utf-8') as file:
         for i,line in tqdm(enumerate(file)):
-            if i == 10000: break
+            """ if i == 10000: break """
             fields = line.strip().split('\t')
             terms = preprocess(fields[1])
             doc_id = int(fields[0])
             lengths[doc_id] = len(terms)
     print("Scoring...")
+    file.close()
     index_file = "inverted_index.sqlite"
     index = InvertedIndex(index_file)
     scorer_bm25 = ScorerBM25(index.index, DocumentCollection(lengths))
     print("Reading queries...")
+    results = []
     with open('queries_train.csv','r') as f:
         next(f)
         index = 1
         print("Writing queries...")
-        with open("output.txt","w") as trec:
-            for line in tqdm(f):
-                if index==2:break
-                columns = line.split(',')
-                turn_indentifier = columns[0]
-                placeholder = "Q0"
-                test = scorer_bm25.score_collection(preprocess(columns[1]))
-                top_results = scorer_bm25.get_top_n_results(1000)
-                print("top_results")
-                print(top_results)
-                for i, res in enumerate(top_results):
-                    doc_id = res[0]
-                    doc_score = res[1]
-                    line = f"{turn_indentifier} {placeholder} {doc_id} {i+1} {doc_score} BM25\n"
-                    print("result written")
-                    trec.write(line)
-                index+=1
+        for line in tqdm(f):
+            """ if index==2:break """
+            columns = line.split(',')
+            turn_indentifier = columns[0]
+            placeholder = "Q0"
+            test = scorer_bm25.score_collection(preprocess(columns[1]))
+            top_results = scorer_bm25.get_top_n_results(1000)
+            print("top_results")
+            for i, res in enumerate(top_results):
+                doc_id = res[0]
+                doc_score = res[1]
+                results.append(f"{turn_indentifier} {placeholder} {doc_id} {i+1} {doc_score} BM25\n")
+            index+=1
+    f.close()
+    with open("output.txt","w") as trec:
+        trec.writelines(results)
+        trec
