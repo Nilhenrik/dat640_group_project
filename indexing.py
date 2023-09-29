@@ -29,7 +29,6 @@ class InvertedIndex(SqliteDict):
         super().__init__(filename, flag="n" if new else "c")
         self.index:Dict[str, Dict[Tuple[int,int]]] ={} if new else self
         self.collection ={} if new else self
-        self.lengths: Dict[int, int] = {} if new else self
         
     def add_posting(self,term:str,doc_id:int)->None:
         if term not in self.index:
@@ -43,8 +42,6 @@ class InvertedIndex(SqliteDict):
         if self.flag == "n":
             print("updating index...")
             self.update(self.index)
-            #print("updating collection...")
-            self.update(self.lengths)
             print("commiting...")
             self.commit()
             print("Index updated.")
@@ -54,12 +51,11 @@ class InvertedIndex(SqliteDict):
 if __name__ == "__main__":
     with open('collection.tsv', 'r',encoding='utf-8') as file:
         with InvertedIndex('inverted_index.sqlite', new=True,) as index:
-            lengths = {}
             for i,line in tqdm(enumerate(file)):
+                if i == 10000: break
                 fields = line.strip().split('\t')
                 terms = preprocess(fields[1])
                 doc_id = int(fields[0])
-                index.lengths[doc_id] = len(terms)
                 for term in terms:
                     if term is None:continue
                     index.add_posting(term, doc_id)

@@ -8,11 +8,20 @@ from tqdm import tqdm
 from indexing import preprocess,InvertedIndex
 CollectionType = Dict[str, List[int]]
 
+class DocumentCollection(DictClass):
+    def total_length(self) -> int:
+            """Total number of terms for all documents."""
+            return sum(self.values())
+
+    def avg_length(self) -> float:
+        """Average number of terms across all documents."""
+        return self.total_length() / len(self)
+
 class Scorer(abc.ABC):
     def __init__(
         self,
         index: CollectionType,
-        lengths: Dict[int,int]
+        collection: DocumentCollection
     ):
         """Interface for the scorer class.
 
@@ -27,7 +36,7 @@ class Scorer(abc.ABC):
         Raises:
             ValueError: Either field or fields need to be specified.
         """
-        self.lengths = lengths
+        self.collection = collection
         self.index = index
 
         # Score accumulator for the query that is currently being scored.
@@ -70,31 +79,42 @@ class Scorer(abc.ABC):
 class ScorerBM25(Scorer):
     def __init__(
         self,
-        lengths: Dict[int,int],
         index: CollectionType,
+        collection: DocumentCollection,
         b: float = 0.75,
         k1: float = 1.2,
     ) -> None:
-        super(ScorerBM25, self).__init__(lengths, index)
+        super(ScorerBM25, self).__init__(index, collection)
+        print(collection.values())
+        print(index.values())
         self.b = b
         self.k1 = k1
 
     def score_term(self, term: str, query_freq: int) -> None:
         docs = self.index.get(term) or []
-        N = sum(self.lengths.values())
+        N = self.collection.total_length()
         nt = len(docs)
-        avgdl = N / len(self.lengths)
+        avgdl = self.collection.avg_length()
         for doc_id, ctd in docs.items():
-            dlen = self.lengths.get(doc_id)
+            dlen = self.collection.get(doc_id) or 0
             ctd = ctd
             self.scores[doc_id] += ((ctd*(1+self.k1)) / (ctd+self.k1*(1-self.b+self.b*(dlen/avgdl)))) * math.log(N/nt) 
 
 
 if __name__ == "__main__":
+    print("Getting collection...")
+    lengths = {}
+    with open('collection.tsv', 'r',encoding='utf-8') as file:
+        for i,line in tqdm(enumerate(file)):
+            if i == 10000: break
+            fields = line.strip().split('\t')
+            terms = preprocess(fields[1])
+            doc_id = int(fields[0])
+            lengths[doc_id] = len(terms)
     print("Scoring...")
     index_file = "inverted_index.sqlite"
     index = InvertedIndex(index_file)
-    scorer_bm25 = ScorerBM25(index.lengths, index.index)
+    scorer_bm25 = ScorerBM25(index.index, DocumentCollection(lengths))
     print("Reading queries...")
     with open('queries_train.csv','r') as f:
         next(f)
