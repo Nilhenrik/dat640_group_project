@@ -97,7 +97,6 @@ class ScorerBM25(Scorer):
         avgdl = self.collection.avg_length()
         for doc_id, ctd in docs.items():
             dlen = self.collection.get(doc_id) or 0
-            ctd = ctd
             self.scores[doc_id] += ((ctd*(1+self.k1)) / (ctd+self.k1*(1-self.b+self.b*(dlen/avgdl)))) * math.log(N/nt) 
 
 
