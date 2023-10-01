@@ -41,7 +41,8 @@ class Scorer(abc.ABC):
 
         # Score accumulator for the query that is currently being scored.
         self.scores = None
-
+        self.N = self.collection.total_length()
+        self.avgdl = self.collection.avg_length()
     def get_top_n_results(self, n: int) -> List[Tuple[int, float]]:
         return list(sorted(self.scores.items(), key=lambda item: item[1], reverse=True))[:1000]
 
@@ -82,7 +83,7 @@ class ScorerBM25(Scorer):
         index: CollectionType,
         collection: DocumentCollection,
         b: float = 0.75,
-        k1: float = 1.2,
+        k1: float = 1.8,
     ) -> None:
         super(ScorerBM25, self).__init__(index, collection)
         """ print(collection.values())
@@ -92,12 +93,11 @@ class ScorerBM25(Scorer):
 
     def score_term(self, term: str, query_freq: int) -> None:
         docs = self.index.get(term) or []
-        N = self.collection.total_length()
         nt = len(docs)
-        avgdl = self.collection.avg_length()
+        idf = math.log(self.N/nt)
         for doc_id, ctd in docs.items():
             dlen = self.collection.get(doc_id) or 0
-            self.scores[doc_id] += ((ctd*(1+self.k1)) / (ctd+self.k1*(1-self.b+self.b*(dlen/avgdl)))) * math.log(N/nt) 
+            self.scores[doc_id] += ((ctd*(1+self.k1)) / (ctd+self.k1*(1-self.b+self.b*(dlen/self.avgdl)))) * idf 
 
 
 if __name__ == "__main__":
@@ -137,4 +137,3 @@ if __name__ == "__main__":
     f.close()
     with open("output.txt","w") as trec:
         trec.writelines(results)
-        trec
