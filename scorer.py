@@ -83,7 +83,7 @@ class ScorerBM25(Scorer):
         index: CollectionType,
         collection: DocumentCollection,
         b: float = 0.75,
-        k1: float = 1.8,
+        k1: float = 1,
     ) -> None:
         super(ScorerBM25, self).__init__(index, collection)
         """ print(collection.values())
