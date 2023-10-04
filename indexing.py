@@ -6,7 +6,7 @@ if not pt.started():
 
 
 print("Reading file")
-df = pd.read_csv('collection.tsv', sep='\t', names=['docno', 'text'],dtype=str, encoding='utf-8')
+df = pd.read_csv('./data/collection.tsv', sep='\t', names=['docno', 'text'],dtype=str, encoding='utf-8')
 print("Dataframe read")
 df.dropna(inplace=True)
 res_dict = df.to_dict()
