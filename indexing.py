@@ -1,6 +1,5 @@
 import pyterrier as pt
 import pandas as pd
-from typing import List
 if not pt.started():
   pt.init() 
 
