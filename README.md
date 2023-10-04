@@ -9,5 +9,5 @@ The indexing.py must be run first. It will create a terrier index for the datase
 The scoring.py must be run after the index is created. This will utilize the terrier index and use BM25 to score the documents
 
 # Scores
-The command: ./eval/trec_eval -c -m recall.1000 -m map -m recip_rank -m ndcg_cut.3 -l2 -M1000 qrels_train.txt bm25score.txt__
+The command: ./eval/trec_eval -c -m recall.1000 -m map -m recip_rank -m ndcg_cut.3 -l2 -M1000 qrels_train.txt bm25score.txt<br />
 Will give out the Recall@1000, NDCG@3, MAP, and MRR.
