@@ -11,7 +11,7 @@ df.dropna(inplace=True)
 res_dict = df.to_dict()
 # Indexing using PyTerrier
 index_loc = "./terrier_index"
-indexer = pt.IterDictIndexer(index_loc, overwrite=True, verbose=True)
+indexer = pt.IterDictIndexer(index_loc, overwrite=True, verbose=True,tokeniser="UTFTokeniser")
 print("Indexer made")
 index = indexer.index(df.to_dict(orient="records"))
 #index = indexer.index(res_dict["text"], res_dict["docno"])

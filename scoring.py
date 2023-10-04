@@ -25,6 +25,6 @@ qrels = pt.io.read_qrels(qrels_file)
 queries['query'] = queries['query'].apply(preprocess)
 
 results = bm25.transform(queries[['qid', 'query']])
-pt.io.write_results(results, "./data/bm25score.txt",append=True)
+pt.io.write_results(results, "./data/bm25score.txt")
 #eval_metrics = ["map", "ndcg", "P_5", "P_10"]
 #evaluator = pt.Utils.evaluate(results, qrels, metrics=eval_metrics)
