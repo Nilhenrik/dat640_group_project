@@ -27,6 +27,3 @@ queries['query'] = queries['query'].apply(preprocess)
 results = bm25.transform(queries[['qid', 'query']])
 
 pt.io.write_results(results, "bm25score.txt")
-eval_metrics = ["map", "ndcg", "P_5", "P_10"]
-evaluator = pt.Utils.evaluate(results, qrels, metrics=eval_metrics)
-print(evaluator)
