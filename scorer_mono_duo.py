@@ -23,8 +23,7 @@ qrels_file = "./data/qrels_train.txt"
 index = pt.IndexFactory.of(index_loc)
 
 bm25 = pt.BatchRetrieve(index, wmodel="BM25",controls={"bm25.k1": 1.5, "bm25.b": 0.5})
-dataset = pt.get_dataset("trec-cd", dataset_path="./data/collection100.tsv")
-mono_pipeline = bm25 >> pt.text.get_text(dataset, "text") >> monoT5
+mono_pipeline = bm25 >> pt.text.get_text(index, "text") >> monoT5
 duo_pipeline = mono_pipeline % 50 >> duoT5
 
 

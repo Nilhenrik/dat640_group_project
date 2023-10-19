@@ -6,7 +6,7 @@ if not pt.started():
 
 
 print("Reading file")
-df = pd.read_csv('./data/collection.tsv', sep='\t', names=['docno', 'text'],dtype=str, encoding='utf-8')
+df = pd.read_csv('./data/collection100.tsv', sep='\t', names=['docno', 'text'],dtype=str, encoding='utf-8')
 print("Dataframe read")
 df.dropna(inplace=True)
 doc2query = pyterrier_doc2query.Doc2Query(append=True) # append generated queries to the original document text
@@ -15,7 +15,7 @@ doc2query = pyterrier_doc2query.Doc2Query(append=True) # append generated querie
 index_loc = "./terrier_index"
 
 # We chain the doc2query transformation with the IterDictIndexer for indexing
-indexer = doc2query >> pt.IterDictIndexer(index_loc, overwrite=True, verbose=True, tokeniser="UTFTokeniser")
+indexer = doc2query >> pt.IterDictIndexer(index_loc, meta={"docno": 20, "text": 4096}, overwrite=True, verbose=True, tokeniser="UTFTokeniser")
 print("Indexer made")
 
 # Trigger the indexing process
