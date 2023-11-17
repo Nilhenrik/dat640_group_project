@@ -8,9 +8,16 @@ pip install -r requirements.txt
 ```
 
 ## Indexing
-The indexing.py must be run first. It will create a terrier index for the dataset.
+There is two different indexing files, one for the baseline and one with document expansion.<br>
+One of the indexing files must be run first. It will create a terrier index for the dataset.<br>
+
+To run the baseline indexing
 ```shell
-python indexing.py
+python indexingBaseline.py
+```
+To run the document expansion indexing
+```shell
+python indexingExpando.py
 ```
 
 ## Baseline Retreival
