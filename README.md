@@ -4,7 +4,7 @@ First it is important to download the dataset from: https://gustav1.ux.uis.no/da
 The dataset is large, hence it is not in the repository <br/>
 Also need to to install the required pip packages
 ```shell
-pip install -r requirements.txt
+pip install -r requirements.txt --index-url https://download.pytorch.org/whl/cu118
 ```
 
 ## Indexing
@@ -21,13 +21,13 @@ python indexingExpando.py
 ```
 
 ## Baseline Retreival
-The baseline_retrival.py must be run after the baselien index is created. This will utilize the terrier index and use BM25 to retrieve the documents
+The baseline_retrival.py must be run after the baseline index is created. This will utilize the terrier index and use BM25 to retrieve the documents
 ```shell
 python baseline_retrival.py
 ```
 
 ## Expando Mono Duo
-The mono_duo_retrival.py must be run after the document expansion index is created. This will utilize the terrier index and use Expando Mono Duo to retrieve the documents
+The mono_duo_retrival.py must be run after the baseline index is created. This will utilize the terrier index and use Expando Mono Duo to retrieve the documents
 ```shell
 python mono_duo_retrival.py
 ```
@@ -49,3 +49,5 @@ Will give out the Recall@1000, NDCG@3, MAP, and MRR. Replace file with the file 
 - {./data/bm25score.txt} for the baseline results
 - {./data/monoduo.txt} for the Expando Mono Duo results
 - {./data/finalretrival.txt} for the Expando Mono Duo with T5 Query Rewrites results
+
+The file top3.py is created for formatting the output files from the retrival files to the desired format in Kaggle

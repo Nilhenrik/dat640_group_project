@@ -20,7 +20,7 @@ if not pt.started():
 
 # Queries and index path
 queries_file = "./data/queries_train.csv"
-index_loc = "./index5"
+index_loc = "./index"
 
 # Load the index and pipeline
 index = pt.IndexFactory.of(index_loc)
