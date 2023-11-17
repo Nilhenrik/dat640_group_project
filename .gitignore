@@ -1,6 +1,10 @@
 # Own files
 *.tsv
 *.sqlite
+data/
+index/
+index5.zip
+trec_eval/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
