@@ -55,7 +55,7 @@ mono_pipeline =  bm25 >> pt.text.get_text(index, "text") >> monoT5
 duo_pipeline = mono_pipeline % 50 >> duoT5 
 
 # Load queries and rewrite them
-queries_file = "./data/queries_test.csv"
+queries_file = "./data/queries_train.csv"
 queries = pd.read_csv(queries_file, encoding="utf-8")
 
 queries['query2'] = rewrite_query_with_context(queries)
@@ -71,4 +71,4 @@ mono_results = mono_results[~mono_results['docno'].isin(top_50_duo_results['docn
 combined_results = pd.concat([top_50_duo_results, mono_results])
 
 # Save the data
-pt.io.write_results(combined_results, "./data/test.txt")
+pt.io.write_results(combined_results, "./data/finalretrival.txt")
