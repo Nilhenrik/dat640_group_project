@@ -49,3 +49,5 @@ Will give out the Recall@1000, NDCG@3, MAP, and MRR. Replace file with the file 
 - {./data/bm25score.txt} for the baseline results
 - {./data/monoduo.txt} for the Expando Mono Duo results
 - {./data/finalretrival.txt} for the Expando Mono Duo with T5 Query Rewrites results
+
+The file top3.py is created for formatting the output files from the retrival files to the desired format in Kaggle
