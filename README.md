@@ -40,8 +40,9 @@ python final_retrival.py
 ```
 
 ## Scores
-To enable te trec_eval, you must cd into the folder trec_eval and then use the command make<br />
-The command: 
+To enable the trec_eval, you must clone this repo: https://github.com/usnistgov/trec_eval <br>
+Thereafter cd into the folder trec_eval and then use the command make<br />
+When to are in the root directory afterwards you can use this command to score an output file:
 ```shell
 ./trec_eval/trec_eval -c -m recall.1000 -m map -m recip_rank -m ndcg_cut.3 -l2 -M1000 data/qrels_train.txt {file}
 ```
