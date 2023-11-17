@@ -4,7 +4,7 @@ First it is important to download the dataset from: https://gustav1.ux.uis.no/da
 The dataset is large, hence it is not in the repository <br/>
 Also need to to install the required pip packages
 ```shell
-pip install -r requirements.txt
+pip install -r requirements.txt --index-url https://download.pytorch.org/whl/cu118
 ```
 
 ## Indexing
