@@ -21,13 +21,13 @@ python indexingExpando.py
 ```
 
 ## Baseline Retreival
-The baseline_retrival.py must be run after the baselien index is created. This will utilize the terrier index and use BM25 to retrieve the documents
+The baseline_retrival.py must be run after the baseline index is created. This will utilize the terrier index and use BM25 to retrieve the documents
 ```shell
 python baseline_retrival.py
 ```
 
 ## Expando Mono Duo
-The mono_duo_retrival.py must be run after the document expansion index is created. This will utilize the terrier index and use Expando Mono Duo to retrieve the documents
+The mono_duo_retrival.py must be run after the baseline index is created. This will utilize the terrier index and use Expando Mono Duo to retrieve the documents
 ```shell
 python mono_duo_retrival.py
 ```
