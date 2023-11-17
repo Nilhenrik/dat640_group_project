@@ -4,4 +4,6 @@ nltk
 git+https://github.com/terrierteam/pyterrier_doc2query.git@792dd95733258421da2a3bdc26e8a59a59c6d03b
 git+https://github.com/terrierteam/pyterrier_t5.git@63756ebc2968ab03f46a61f0b391e27873226d75
 protobuf
-torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+torch==2.1.0+cu118
+torchaudio==2.1.0+cu118
+torchvision==0.16.0+cu118
