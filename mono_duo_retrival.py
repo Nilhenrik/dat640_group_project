@@ -32,6 +32,14 @@ duo_pipeline = mono_pipeline % 50 >> duoT5
 queries = pd.read_csv(queries_file)
 queries['query'] = queries['query'].apply(preprocess)
 
-# Run the pipeline and save the results
-results = duo_pipeline.transform(queries[['qid', 'query']])
-pt.io.write_results(results, "./data/monoduo.txt")
+# Run the pipeline
+mono_results = mono_pipeline.transform(queries[['qid', 'query']])
+duo_results = duo_pipeline.transform(queries[['qid', 'query']])
+
+# Combine the duo results with the mono results
+top_50_duo_results = duo_results.head(50)
+mono_results = mono_results[~mono_results['docno'].isin(top_50_duo_results['docno'])]
+combined_results = pd.concat([top_50_duo_results, mono_results])
+
+# Print the results
+pt.io.write_results(combined_results, "./data/monoduo.txt")
